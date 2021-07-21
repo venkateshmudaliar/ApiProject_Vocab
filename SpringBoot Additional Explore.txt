@@ -1,0 +1,119 @@
+
+
+1. Add Encryption to Application.properties
+
+a. Add Dependency and plugin
+
+		<!-- https://mvnrepository.com/artifact/org.jasypt/jasypt -->
+		<dependency>
+		    <groupId>org.jasypt</groupId>
+		    <artifactId>jasypt</artifactId>
+		    <version>1.9.3</version>
+		</dependency>
+
+
+		<plugin>
+		   <groupId>com.github.ulisesbocchio</groupId>
+		   <artifactId>jasypt-maven-plugin</artifactId>
+		   <version>3.0.3</version>
+		 </plugin>
+
+
+b. Wrap Credentials in DEC()
+
+		spring.datasource.username=DEC(root)
+		spring.datasource.password=DEC(password)
+
+
+c. Encrypt Credentials in application.properties
+
+		Project > Run As > Run Configurations > Maven Build > Right click and new Configuration
+			- Specify Base Directory from other config
+ 			- Goals -> jasypt:encrypt -Djasypt.encryptor.password=cafe21
+ 			- RUN
+
+ 	CHECK  Application.properties - values should be encrypted
+
+
+d. Run Springboot Application 
+
+		Add Dependency:
+		<dependency>
+		<groupId>com.github.ulisesbocchio</groupId>
+		<artifactId>jasypt-spring-boot-starter</artifactId>
+		<version>3.0.3</version>
+		</dependency>
+
+		<dependency>
+		<groupId>com.github.ulisesbocchio</groupId>
+		<artifactId>jasypt-spring-boot</artifactId>
+		<version>3.0.3</version>
+		</dependency>
+
+
+		Add Annotation - @EnableEncryptableProperties - to main class
+
+		@SpringBootApplication
+		@EnableEncryptableProperties
+		public class ApiVocabApplication {
+
+			public static void main(String[] args) {
+				SpringApplication.run(ApiVocabApplication.class, args);
+			}
+
+		}
+
+		RUN as SpringBoot  Config -
+			Arguments -> VM Arguments -> -Djasypt.encryptor.password=cafe21
+
+		RUN the application - it should run
+
+
+e. DECRYPT THE CREDENTIALS
+
+ 			Project > Run As > Run Configurations > Maven Build > Right click and new Configuration
+			- Specify Base Directory from other config
+ 			- Goals -> jasypt:decrypt -Djasypt.encryptor.password=cafe21
+ 			- RUN
+
+
+ 			CHECK: the actual file isnt decrypted. The decrypted values are shown in console as output
+
+
+
+
+f. RE ENCRYPT WITH NEW PASSWORD
+			Project > Run As > Run Configurations > Maven Build > Right click and new Configuration
+			- Specify Base Directory from other config
+ 			- Goals -> jasypt:reencrypt -Djasypt.plugin.old.password=cafe21 -Djasypt.encryptor.password=10duke
+ 			- RUN
+
+ 			This changes the ecrypted password in application.properties
+
+
+ 			UPDATE THE VM ARGUMENTS TO NEW PASSWORD AND THEN RUN AS SPRING BOOT APPLICATION
+
+
+g. BUILD JAR WITH ENCRYPTED KEY
+
+	Run Config -> Maven Build ->
+		ConfigName --> GOALS = clean install -Djasypt.encryptor.password=10duke
+
+		Run -> this should create a jar
+
+
+f. RUN THE ENCRYPTED JAR LOCALLY
+
+	CMD: java -Djasypt.encryptor.password=supersecretz -jar myApp.jar 
+
+
+g. DEPLOY ENCRYPTED JAR TO HEROKU
+
+	install plugin - heroku plugins:install heroku-cli-deploy
+	create app - heroku create <APP-NAME> --no-remote
+	deploy jar - heroku deploy:jar target/heroku-demo-0.0.1-SNAPSHOT.jar --app <APP-NAME>
+	check logs - heroku logs --tail --app <APP-NAME>
+
+
+
+________________________________________________________________________________________________________________________

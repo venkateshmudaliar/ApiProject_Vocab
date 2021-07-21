@@ -1,0 +1,18 @@
+
+
+1. A simple API project - Basic Model, Controller, etc with 1 basic function first - Getting all words
+	- Create a DB or it will create it for you. 
+	- More focus on creating it manually
+	Some Additional queries
+		insert into TABLE_VOCAB(ID, VOCAB_WORD, VOCAB_WORD_MEANING, VOCAB_WORD_SENTENCE) values (VOCAB_SEQ_ID.nextval, 'Venkyzzz', 'Mudaliarzzz', 'Sentencezzz');
+		
+		select * from TABLE_VOCAB;
+		
+	- RunningSwagger and showing all data
+	
+	
+2. Adding - Add Word Logic , add and validate
+
+3. Adding Edit word Logic - Requires ID and Word to search and then edits
+
+4. Adding Delete Word Logic - Requires ID and Word to search and then deletes
